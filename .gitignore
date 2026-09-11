@@ -1,0 +1,7 @@
+# Kredensial lokal -- jangan ikut ter-commit
+config.js
+
+# File OS/editor umum
+.DS_Store
+Thumbs.db
+.vscode/

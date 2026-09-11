@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Mitra DIGIPRINT — SIM HIMATIF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ============================================================
+       LAYAR: LOADING (cek sesi awal)
+  ============================================================= -->
+  <div id="screen-loading" class="screen screen-center">
+    <div class="loading-mark">
+      <span class="loading-dot"></span>
+      <p>Memuat sesi&hellip;</p>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       LAYAR: LOGIN / DAFTAR
+  ============================================================= -->
+  <div id="screen-auth" class="screen screen-center hidden">
+    <div class="auth-card">
+      <div class="brand-mark">
+        <span class="brand-mark-icon">DP</span>
+        <div>
+          <p class="brand-mark-title">Mitra DIGIPRINT</p>
+          <p class="brand-mark-sub">SIM HIMATIF</p>
+        </div>
+      </div>
+
+      <h1 id="auth-title">Masuk ke akun Anda</h1>
+      <p class="auth-subtext" id="auth-subtext">Untuk Mitra usaha dan Admin HMIF.</p>
+
+      <form id="form-auth" novalidate>
+        <label class="field">
+          <span>Email</span>
+          <input type="email" id="input-email" autocomplete="email" required placeholder="usaha@email.com">
+        </label>
+        <label class="field">
+          <span>Kata sandi</span>
+          <input type="password" id="input-password" autocomplete="current-password" required minlength="6" placeholder="Minimal 6 karakter">
+        </label>
+
+        <p id="auth-error" class="form-error hidden"></p>
+
+        <button type="submit" id="btn-auth-submit" class="btn btn-primary btn-block">Masuk</button>
+      </form>
+
+      <p class="auth-toggle-row">
+        <span id="auth-toggle-label">Belum punya akun mitra?</span>
+        <button type="button" id="btn-auth-toggle" class="btn-link">Daftar akun mitra</button>
+      </p>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       LAYAR: LENGKAPI PROFIL MITRA (setelah daftar / login pertama)
+  ============================================================= -->
+  <div id="screen-setup-profil" class="screen screen-center hidden">
+    <div class="auth-card">
+      <h1>Lengkapi profil usaha</h1>
+      <p class="auth-subtext">Data ini dipakai untuk laporan setoran ke Kas HMIF. Persentase bagi hasil akan diatur oleh Admin HMIF.</p>
+
+      <form id="form-setup-profil" novalidate>
+        <label class="field">
+          <span>Nama usaha</span>
+          <input type="text" id="input-nama-usaha" required placeholder="mis. Digiprint Kampus A">
+        </label>
+        <label class="field">
+          <span>Nama pemilik</span>
+          <input type="text" id="input-nama-pemilik" required placeholder="Nama lengkap">
+        </label>
+        <label class="field">
+          <span>Nomor WhatsApp</span>
+          <input type="tel" id="input-kontak-wa" placeholder="08xxxxxxxxxx">
+        </label>
+
+        <p id="setup-error" class="form-error hidden"></p>
+
+        <button type="submit" id="btn-setup-submit" class="btn btn-primary btn-block">Simpan &amp; lanjutkan</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       LAYAR: MENUNGGU / DITOLAK PERSETUJUAN ADMIN HMIF
+  ============================================================= -->
+  <div id="screen-menunggu-approval" class="screen screen-center hidden">
+    <div class="auth-card">
+      <h1 id="menunggu-judul">Menunggu persetujuan</h1>
+      <p class="auth-subtext" id="menunggu-pesan">
+        Pendaftaran usaha Anda sedang ditinjau oleh Admin HMIF. Anda akan bisa mengakses Kasir setelah disetujui.
+      </p>
+      <div class="form-actions">
+        <button type="button" id="btn-menunggu-refresh" class="btn btn-primary">Cek status lagi</button>
+        <button type="button" id="btn-menunggu-logout" class="btn btn-ghost">Keluar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       LAYAR: APLIKASI UTAMA
+  ============================================================= -->
+  <div id="screen-app" class="screen hidden">
+    <div class="app-shell">
+
+      <!-- NAVIGASI -->
+      <nav class="app-nav" id="app-nav">
+        <div class="brand-mark brand-mark-nav">
+          <span class="brand-mark-icon">DP</span>
+          <div>
+            <p class="brand-mark-title">DIGIPRINT</p>
+            <p class="brand-mark-sub" id="nav-identitas">&nbsp;</p>
+          </div>
+        </div>
+
+        <div class="app-nav-tabs" id="app-nav-tabs">
+          <button type="button" class="nav-tab" id="tab-btn-pos" data-view="pos">
+            <span class="nav-tab-icon" aria-hidden="true">&#9723;</span> Kasir / POS
+          </button>
+          <button type="button" class="nav-tab" id="tab-btn-produk" data-view="produk">
+            <span class="nav-tab-icon" aria-hidden="true">&#9636;</span> Manajemen Produk
+          </button>
+          <button type="button" class="nav-tab" id="tab-btn-laporan" data-view="laporan">
+            <span class="nav-tab-icon" aria-hidden="true">&#8801;</span> Laporan Keuangan
+          </button>
+          <button type="button" class="nav-tab hidden" id="tab-btn-approval" data-view="approval">
+            <span class="nav-tab-icon" aria-hidden="true">&#10003;</span> Persetujuan Mitra
+          </button>
+        </div>
+
+        <button type="button" id="btn-logout" class="btn btn-ghost btn-block">Keluar</button>
+      </nav>
+
+      <!-- KONTEN -->
+      <main class="app-main">
+
+        <!-- banner status singkat (toast sederhana) -->
+        <div id="status-banner" class="status-banner hidden" role="status"></div>
+
+        <!-- ============ VIEW: KASIR / POS ============ -->
+        <section id="view-pos" class="view hidden">
+          <header class="view-header">
+            <h1>Kasir</h1>
+            <p>Pilih produk untuk menambah ke keranjang, lalu simpan transaksi.</p>
+          </header>
+
+          <div class="pos-layout">
+            <div class="pos-catalog">
+              <div class="pos-filter" id="pos-filter-jenis">
+                <button type="button" class="chip is-active" data-jenis="Semua">Semua</button>
+                <button type="button" class="chip" data-jenis="Warna">Warna</button>
+                <button type="button" class="chip" data-jenis="Hitam Putih">Hitam Putih</button>
+                <button type="button" class="chip" data-jenis="Jilid">Jilid</button>
+                <button type="button" class="chip" data-jenis="Lainnya">Lainnya</button>
+              </div>
+              <div id="pos-product-grid" class="pos-product-grid"></div>
+              <p id="pos-product-empty" class="empty-note hidden">Belum ada produk aktif. Tambahkan dari tab Manajemen Produk.</p>
+            </div>
+
+            <aside class="pos-cart">
+              <h2>Keranjang</h2>
+              <div id="pos-cart-items" class="pos-cart-items"></div>
+              <p id="pos-cart-empty" class="empty-note">Keranjang masih kosong.</p>
+
+              <label class="field">
+                <span>Diskon</span>
+                <select id="pos-select-diskon">
+                  <option value="">Tanpa diskon</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Metode pembayaran</span>
+                <select id="pos-select-metode">
+                  <option value="Tunai">Tunai</option>
+                  <option value="Transfer">Transfer</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Jenis transaksi</span>
+                <select id="pos-select-jenis-transaksi">
+                  <option value="Penjualan">Penjualan (pelanggan bayar)</option>
+                  <option value="Pemakaian Internal HMIF">Pemakaian Internal HMIF (tanpa bayar)</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span id="pos-catatan-label">Catatan (opsional)</span>
+                <input type="text" id="pos-input-catatan" placeholder="mis. nama pelanggan">
+              </label>
+              <p id="pos-catatan-hint" class="form-error hidden">Wajib diisi untuk Pemakaian Internal HMIF (nama pengambil/keperluan).</p>
+
+              <dl class="pos-totals">
+                <div><dt>Total kotor</dt><dd id="pos-total-kotor">Rp0</dd></div>
+                <div><dt>Diskon</dt><dd id="pos-total-diskon">− Rp0</dd></div>
+                <div class="pos-totals-final"><dt>Total bersih</dt><dd id="pos-total-bersih">Rp0</dd></div>
+              </dl>
+
+              <p id="pos-save-error" class="form-error hidden"></p>
+
+              <button type="button" id="btn-pos-simpan" class="btn btn-primary btn-block" disabled>Simpan transaksi</button>
+              <button type="button" id="btn-pos-kosongkan" class="btn btn-ghost btn-block">Kosongkan keranjang</button>
+            </aside>
+          </div>
+
+          <div class="panel">
+            <h2>Transaksi terakhir</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Waktu</th><th>Item</th><th class="num">Total bersih</th><th>Status</th><th></th></tr>
+                </thead>
+                <tbody id="pos-riwayat-body">
+                  <tr><td colspan="5" class="empty-note">Belum ada transaksi.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ VIEW: MANAJEMEN PRODUK ============ -->
+        <section id="view-produk" class="view hidden">
+          <header class="view-header">
+            <h1>Manajemen Produk</h1>
+            <p>Kelola daftar produk/layanan dan diskon milik usaha Anda.</p>
+          </header>
+
+          <div class="subtabs" id="subtabs-produk">
+            <button type="button" class="subtab is-active" id="subtab-btn-produk" data-subview="produk">Daftar Produk</button>
+            <button type="button" class="subtab" id="subtab-btn-diskon" data-subview="diskon">Diskon</button>
+          </div>
+
+          <!-- SUBVIEW: DAFTAR PRODUK -->
+          <div id="subview-produk" class="subview">
+            <div class="panel">
+              <h2 id="form-produk-title">Tambah produk</h2>
+              <form id="form-produk" class="form-grid" novalidate>
+                <input type="hidden" id="input-produk-id" value="">
+                <label class="field">
+                  <span>Nama produk</span>
+                  <input type="text" id="input-produk-nama" required placeholder="mis. Print A4 Warna">
+                </label>
+                <label class="field">
+                  <span>Jenis</span>
+                  <select id="input-produk-jenis" required>
+                    <option value="Warna">Warna</option>
+                    <option value="Hitam Putih">Hitam Putih</option>
+                    <option value="Jilid">Jilid</option>
+                    <option value="Lainnya">Lainnya</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Harga satuan (Rp)</span>
+                  <input type="number" id="input-produk-harga" min="0" step="50" required placeholder="0">
+                </label>
+                <label class="field">
+                  <span>Stok (kosongkan jika tidak dilacak)</span>
+                  <input type="number" id="input-produk-stok" min="0" step="1" placeholder="mis. 500 lembar">
+                </label>
+                <label class="field field-checkbox">
+                  <input type="checkbox" id="input-produk-status" checked>
+                  <span>Aktif &amp; tampil di Kasir</span>
+                </label>
+
+                <p id="produk-form-error" class="form-error hidden"></p>
+
+                <div class="form-actions">
+                  <button type="submit" id="btn-produk-simpan" class="btn btn-primary">Simpan produk</button>
+                  <button type="button" id="btn-produk-batal-edit" class="btn btn-ghost hidden">Batal edit</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="panel">
+              <h2>Semua produk</h2>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr><th>Nama</th><th>Jenis</th><th class="num">Harga</th><th class="num">Stok</th><th>Status</th><th></th></tr>
+                  </thead>
+                  <tbody id="table-produk-body">
+                    <tr><td colspan="6" class="empty-note">Belum ada produk.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUBVIEW: DISKON -->
+          <div id="subview-diskon" class="subview hidden">
+            <div class="panel">
+              <h2 id="form-diskon-title">Tambah diskon</h2>
+              <form id="form-diskon" class="form-grid" novalidate>
+                <input type="hidden" id="input-diskon-id" value="">
+                <label class="field">
+                  <span>Kode diskon</span>
+                  <input type="text" id="input-diskon-kode" required placeholder="mis. HMIF10">
+                </label>
+                <label class="field">
+                  <span>Nama diskon</span>
+                  <input type="text" id="input-diskon-nama" required placeholder="mis. Diskon Anggota HMIF">
+                </label>
+                <label class="field">
+                  <span>Potongan (%)</span>
+                  <input type="number" id="input-diskon-persen" min="0" max="100" step="1" required placeholder="0">
+                </label>
+                <label class="field field-checkbox">
+                  <input type="checkbox" id="input-diskon-khusus-hmif">
+                  <span>Khusus anggota HMIF</span>
+                </label>
+                <label class="field field-checkbox">
+                  <input type="checkbox" id="input-diskon-status" checked>
+                  <span>Aktif &amp; bisa dipakai di Kasir</span>
+                </label>
+
+                <p id="diskon-form-error" class="form-error hidden"></p>
+
+                <div class="form-actions">
+                  <button type="submit" id="btn-diskon-simpan" class="btn btn-primary">Simpan diskon</button>
+                  <button type="button" id="btn-diskon-batal-edit" class="btn btn-ghost hidden">Batal edit</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="panel">
+              <h2>Semua diskon</h2>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr><th>Kode</th><th>Nama</th><th class="num">Potongan</th><th>Khusus HMIF</th><th>Status</th><th></th></tr>
+                  </thead>
+                  <tbody id="table-diskon-body">
+                    <tr><td colspan="6" class="empty-note">Belum ada diskon.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ VIEW: LAPORAN KEUANGAN ============ -->
+        <section id="view-laporan" class="view hidden">
+          <header class="view-header">
+            <h1 id="laporan-title">Laporan Keuangan</h1>
+            <p id="laporan-subtitle">Ringkasan pendapatan dan setoran ke Kas HMIF.</p>
+          </header>
+
+          <form id="form-laporan-filter" class="laporan-filter" novalidate>
+            <label class="field">
+              <span>Dari tanggal</span>
+              <input type="date" id="input-laporan-dari">
+            </label>
+            <label class="field">
+              <span>Sampai tanggal</span>
+              <input type="date" id="input-laporan-sampai">
+            </label>
+            <label class="field">
+              <span>Status</span>
+              <select id="input-laporan-status">
+                <option value="semua">Semua status</option>
+                <option value="pending">Pending (belum disetor)</option>
+                <option value="lunas">Lunas</option>
+                <option value="dibatalkan">Dibatalkan</option>
+                <option value="internal">Pemakaian Internal HMIF</option>
+              </select>
+            </label>
+            <button type="submit" id="btn-laporan-filter" class="btn btn-primary">Terapkan</button>
+            <button type="button" id="btn-laporan-reset" class="btn btn-ghost">Tampilkan semua</button>
+          </form>
+
+          <div class="laporan-summary" id="laporan-summary">
+            <div class="summary-card">
+              <p class="summary-label">Total kotor</p>
+              <p class="summary-value" id="laporan-total-kotor">Rp0</p>
+            </div>
+            <div class="summary-card">
+              <p class="summary-label">Total diskon</p>
+              <p class="summary-value" id="laporan-total-diskon">Rp0</p>
+            </div>
+            <div class="summary-card">
+              <p class="summary-label">Total bersih</p>
+              <p class="summary-value" id="laporan-total-bersih">Rp0</p>
+            </div>
+            <div class="summary-card">
+              <p class="summary-label">Porsi mitra</p>
+              <p class="summary-value" id="laporan-porsi-mitra">Rp0</p>
+            </div>
+            <div class="summary-card summary-card-highlight">
+              <p class="summary-label">Wajib disetor ke Kas HMIF</p>
+              <p class="summary-value" id="laporan-porsi-hmif">Rp0</p>
+            </div>
+            <div class="summary-card">
+              <p class="summary-label">Belum disetor (Pending)</p>
+              <p class="summary-value" id="laporan-belum-setor">Rp0</p>
+            </div>
+          </div>
+
+          <!-- Ringkasan per-mitra: hanya dirender untuk Admin HMIF -->
+          <div class="panel hidden" id="panel-laporan-per-mitra">
+            <h2>Ringkasan per mitra</h2>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Usaha</th><th class="num">Total bersih</th><th class="num">Porsi HMIF</th><th class="num">Belum disetor</th></tr>
+                </thead>
+                <tbody id="table-laporan-per-mitra-body">
+                  <tr><td colspan="4" class="empty-note">Tidak ada data.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>Rincian transaksi</h2>
+            <div class="table-wrap">
+              <table>
+                <thead id="table-laporan-head">
+                  <tr>
+                    <th>Waktu</th>
+                    <th class="th-mitra hidden">Mitra</th>
+                    <th>Jenis</th>
+                    <th class="num">Kotor</th>
+                    <th class="num">Diskon</th>
+                    <th class="num">Bersih</th>
+                    <th class="num">Porsi HMIF</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="table-laporan-body">
+                  <tr><td colspan="9" class="empty-note">Tidak ada data.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ VIEW: PERSETUJUAN MITRA (Admin HMIF) ============ -->
+        <section id="view-approval" class="view hidden">
+          <header class="view-header">
+            <h1>Persetujuan Mitra</h1>
+            <p>Tinjau pendaftaran usaha mitra DIGIPRINT baru.</p>
+          </header>
+
+          <div class="pos-filter" id="approval-filter-status">
+            <button type="button" class="chip is-active" data-status="Menunggu">Menunggu</button>
+            <button type="button" class="chip" data-status="Disetujui">Disetujui</button>
+            <button type="button" class="chip" data-status="Ditolak">Ditolak</button>
+            <button type="button" class="chip" data-status="Semua">Semua</button>
+          </div>
+
+          <div class="panel">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Usaha</th><th>Pemilik</th><th>Kontak WA</th><th class="num">Porsi HMIF</th><th>Terdaftar</th><th>Status</th><th></th></tr>
+                </thead>
+                <tbody id="table-approval-body">
+                  <tr><td colspan="7" class="empty-note">Tidak ada data.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
